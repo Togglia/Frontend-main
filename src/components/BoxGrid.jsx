@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
-import { RiCloseCircleLine } from "react-icons/ri";
+import { RiCloseCircleLine, RiErrorWarningLine } from "react-icons/ri";
 
 const Wrapper = styled.div`
   margin-left: 30px;
@@ -85,6 +86,7 @@ const Card = styled(motion.div)`
     font-size: 1.6rem;
   }
 `;
+
 const Video = styled.video`
   width: 175px;
   height: 175px;
@@ -138,86 +140,59 @@ const cardVariants = {
 
 const BoxGrid = () => {
   const [selectedBox, setSelectedBox] = useState(null);
+  const [videoId, setBridgeId] = useState(null);
+  const [videoBlob, setVideoBlob] = useState(null); // 추가: Blob 데이터 상태
+
+  const [file, setfile] = useState(null);
+
   const bridges = [
-    {
-      name: "강동대교",
-    },
-    {
-      name: "천호대교",
-    },
-    {
-      name: "올림픽대교",
-    },
-    {
-      name: "잠실대교",
-    },
-    {
-      name: "청담대교",
-    },
-    {
-      name: "성수대교",
-    },
-    {
-      name: "동호대교",
-    },
-    {
-      name: "한남대교",
-    },
-    {
-      name: "반포대교",
-    },
-    {
-      name: "동작대교",
-    },
-    {
-      name: "원효대교",
-    },
-    {
-      name: "마포대교",
-    },
-    {
-      name: "서강대교",
-    },
-    {
-      name: "성산대교",
-    },
-    {
-      name: "월드컵대교",
-    },
-    {
-      name: "가양대교",
-    },
-    {
-      name: "방화대교",
-    },
-    {
-      name: "노량대교",
-    },
-    {
-      name: "영동대교",
-    },
-    {
-      name: "양화대교",
-    },
+    { id: 1, name: "강동대교" },
+    { id: 2, name: "천호대교" },
+    { id: 3, name: "올림픽대교" },
+    { id: 4, name: "잠실대교" },
+    { id: 5, name: "청담대교" },
+    { id: 6, name: "성수대교" },
+    { id: 7, name: "동호대교" },
+    { id: 8, name: "한남대교" },
+    { id: 9, name: "반포대교" },
+    { id: 10, name: "동작대교" },
+    { id: 11, name: "원효대교" },
+    { id: 12, name: "마포대교" },
+    { id: 13, name: "서강대교" },
+    { id: 14, name: "성산대교" },
+    { id: 15, name: "월드컵대교" },
+    { id: 16, name: "가양대교" },
+    { id: 17, name: "방화대교" },
+    { id: 18, name: "노량대교" },
+    { id: 19, name: "영동대교" },
+    { id: 20, name: "양화대교" },
   ];
 
-  const handleBoxClick = (name) => {
+  //서버에 영상 요청
+  useEffect(() => {
+    if (selectedBox) {
+      axios
+        .get(`http://localhost:4000/api/videos/${videoId}/stream`, {
+          responseType: "blob", // 추가: Blob 데이터 요청
+        })
+        .then((response) => {
+          setVideoBlob(response.data); // Blob 데이터를 상태에 저장
+        })
+        .catch((error) => {
+          console.error("영상을 가져오기 실패.", error);
+        });
+    }
+  }, [selectedBox]);
+
+  const handleBoxClick = (name, id) => {
     setSelectedBox(name);
+    setBridgeId(id);
   };
 
-  const renderBoxes = () => {
-    return bridges.map((bridge, index) => (
-      <Box
-        key={index}
-        className="box"
-        variants={boxVariants}
-        initial="initial"
-        animate="animate"
-        onClick={() => handleBoxClick(bridge.name)}
-      >
-        {bridge.name}
-      </Box>
-    ));
+  const handleCloseButtonClick = () => {
+    setSelectedBox(null);
+    setBridgeId(null);
+    setVideoBlob(null); // 비디오를 닫을 때 Blob 데이터 초기화
   };
 
   return (
@@ -232,8 +207,7 @@ const BoxGrid = () => {
             animate="animate"
             exit="exit"
           >
-            <CloseButton onClick={() => setSelectedBox(null)}>
-              {/* Close */}
+            <CloseButton onClick={handleCloseButtonClick}>
               <Icon>
                 <RiCloseCircleLine />
               </Icon>
@@ -242,20 +216,28 @@ const BoxGrid = () => {
             <CardTitle>{selectedBox}</CardTitle>
 
             <div>
-              <Video
-                muted
-                autoPlay
-                controls
-                width={"175px"}
-                height={"175px"}
-                loop
-              >
-                <source
-                  src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                  type="video/mp4"
-                />
-                <strong>Your browser does not support the video tag.</strong>
-              </Video>
+              {videoBlob ? (
+                <Video
+                  muted
+                  autoPlay
+                  controls
+                  width={"175px"}
+                  height={"175px"}
+                  loop
+                >
+                  <source src={URL.createObjectURL(videoBlob)} type="video/mp4" />
+                  <strong>Your browser does not support the video tag.</strong>
+                </Video>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  style={{ width: "175px", height: "175px" }}
+                >
+                  <RiErrorWarningLine size="150" color="white" />
+                </motion.div>
+              )}
               <p>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit
                 ea neque quidem exercitationem possimus.
@@ -264,7 +246,18 @@ const BoxGrid = () => {
           </Card>
         )}
       </AnimatePresence>
-      {renderBoxes()}
+      {bridges.map((bridge, index) => (
+        <Box
+          key={index}
+          className="box"
+          variants={boxVariants}
+          initial="initial"
+          animate="animate"
+          onClick={() => handleBoxClick(bridge.name, bridge.id)}
+        >
+          {bridge.name}
+        </Box>
+      ))}
     </Wrapper>
   );
 };
