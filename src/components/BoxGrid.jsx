@@ -146,28 +146,29 @@ const BoxGrid = () => {
   const [file, setfile] = useState(null);
 
   const bridges = [
-    { id: 1, name: "강동대교" },
-    { id: 2, name: "천호대교" },
-    { id: 3, name: "올림픽대교" },
-    { id: 4, name: "잠실대교" },
-    { id: 5, name: "청담대교" },
-    { id: 6, name: "성수대교" },
-    { id: 7, name: "동호대교" },
-    { id: 8, name: "한남대교" },
-    { id: 9, name: "반포대교" },
+    { id: 1, name: "방화대교" },
+    { id: 2, name: "가양대교" },
+    { id: 3, name: "월드컵대교" },
+    { id: 4, name: "성산대교" },
+    { id: 5, name: "양화대교" },
+    { id: 6, name: "서강대교" },
+    { id: 7, name: "마포대교" },
+    { id: 8, name: "원효대교" },
+    { id: 9, name: "노량대교" },
     { id: 10, name: "동작대교" },
-    { id: 11, name: "원효대교" },
-    { id: 12, name: "마포대교" },
-    { id: 13, name: "서강대교" },
-    { id: 14, name: "성산대교" },
-    { id: 15, name: "월드컵대교" },
-    { id: 16, name: "가양대교" },
-    { id: 17, name: "방화대교" },
-    { id: 18, name: "노량대교" },
-    { id: 19, name: "영동대교" },
-    { id: 20, name: "양화대교" },
+    { id: 11, name: "반포대교" },
+    { id: 12, name: "한남대교" },
+    { id: 13, name: "동호대교" },
+    { id: 14, name: "성수대교" },
+    { id: 15, name: "영동대교" },
+    { id: 16, name: "청담대교" },
+    { id: 17, name: "잠실대교" },
+    { id: 18, name: "올림픽대교" },
+    { id: 19, name: "천호대교" },
+    { id: 20, name: "강동대교" },
   ];
 
+  
   //서버에 영상 요청
   useEffect(() => {
     if (selectedBox) {
@@ -218,16 +219,15 @@ const BoxGrid = () => {
             <div>
               {videoBlob ? (
                 <Video
-                  muted
-                  autoPlay
-                  controls
-                  width={"175px"}
-                  height={"175px"}
-                  loop
-                >
-                  <source src={URL.createObjectURL(videoBlob)} type="video/mp4" />
-                  <strong>Your browser does not support the video tag.</strong>
-                </Video>
+                muted
+                autoPlay
+                width={"175px"}
+                height={"175px"}
+                loop
+              >
+                <source src={URL.createObjectURL(videoBlob)} type="video/mp4" />
+                <strong>Your browser does not support the video tag.</strong>
+              </Video>
               ) : (
                 <motion.div
                   initial={{ opacity: 0 }}
